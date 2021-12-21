@@ -1,5 +1,7 @@
 # Deploy and Manage Gitlab Runners on AWS EC2
 
+This solution automates Gitlab Runner deployment and administrative tasks on AWS EC2 through Infrastructure-as-Code (IaC).
+
 ## Overview of the solution
 The following diagram displays the solution architecture. It also shows the workflow of deploying the Gitlab Runner and registering it to Gitlab projects. 
 <img src="Images/gitlab-runner-architecture.png" width="700">
@@ -81,6 +83,7 @@ For example:
 ```
 
 After the stack is deployed successfully, you will see the Gitlab Runner autoscaling group created in the EC2 console. 
+
 <img src="Images/gitlab-runner-demo-asg.png" width="700">
 
 Now go to your Gitlab project Settings->CICD->Runners->Available specific runners, you will see the fully configured Gitlab Runner. The green circle indicates that the Gitlab Runner is ready for use. 
@@ -139,7 +142,7 @@ cd <your-repo-dir>
 ```
 3.	Relaunch the instances in the Gitlab Runner autoscaling group. The new instances will use the new RunnerRegistrationTokens value. Run the following command to relaunch the instances:
 ```
-cycle-runner.sh <runner-autoscaling-group-name> <region> <optional-aws-profile>
+./cycle-runner.sh <runner-autoscaling-group-name> <region> <optional-aws-profile>
 ```
 To remove projects from the Gitlab Runner, follow the steps described above, with just one difference. Instead of adding new tokens to the RunnerRegistrationTokens parameter, remove the token(s) of the project that you want to dissociate from the runner.  
 
