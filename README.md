@@ -1,6 +1,6 @@
 # Deploy and Manage Gitlab Runners on Amazon EC2
 
-This solution automates Gitlab Runner deployment and administrative tasks on AWS EC2 through Infrastructure-as-Code (IaC).
+This solution automates Gitlab Runner deployment and administrative tasks on Amazon EC2 through Infrastructure-as-Code (IaC).
 
 ## Overview of the solution
 The following diagram displays the solution architecture. It also shows the workflow of deploying the Gitlab Runner and registering it to Gitlab projects. 
