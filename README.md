@@ -1,4 +1,4 @@
-# Deploy and Manage Gitlab Runners on AWS EC2
+# Deploy and Manage Gitlab Runners on Amazon EC2
 
 This solution automates Gitlab Runner deployment and administrative tasks on AWS EC2 through Infrastructure-as-Code (IaC).
 
@@ -32,7 +32,7 @@ For this walkthrough, you need the following:
 - A VPC with 2 private subnets and that is connected to the internet via NAT gateway allowing outbound traffic.  
 - The following IAM service-linked role created in the AWS account: AWSServiceRoleForAutoScaling
 - An S3 bucket for storing Lambda deployment packages. 
-- Familiarity with Git, Gitlab CI/CD, Docker, AWS EC2, and CloudFormation.
+- Familiarity with Git, Gitlab CI/CD, Docker, EC2, and CloudFormation.
 
 ## Build a docker executor image for the Gitlab Runner
 The Gitlab Runner in this solution is implemented as docker executor. The Docker executor connects to Docker Engine and runs each build in a separate and isolated container via a predefined docker image. The first step in deploying the Gitlab Runner is building a docker executor image. We provided a simple Dockerfile in order to build this image. You may customize the Dockerfile to install your own requirements. 
