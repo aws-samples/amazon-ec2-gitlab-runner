@@ -277,9 +277,11 @@ Resources:
               command: sudo useradd --comment 'GitLab Runner' --create-home gitlab-runner --shell /bin/bash
             06InstallGitlabRunner:
               command: sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
-            07SetRegion:
+            07StartGitlabRunner:
+              command: sudo gitlab-runner start              
+            08SetRegion:
               command: !Sub 'aws configure set default.region ${AWS::Region}'
-            08ConfigureDockerExecutor:
+            09ConfigureDockerExecutor:
               command: !Sub 
                 - |
                   for GitlabGroupToken in `aws ssm get-parameters --names /${AWS::StackName}/ci-tokens --query 'Parameters[0].Value' | sed -e "s/\"//g" | sed "s/,/ /g"`;do
@@ -295,9 +297,7 @@ Resources:
                       --tag-list "${RunnerEnvironment}-${RunnerVersion}-docker"
                   done
                 - isLOCKED: !FindInMap [GitlabRunnerRegisterOptionsMap, !Ref RunnerEnvironment, isLOCKED]
-                  ACCESS: !FindInMap [GitlabRunnerRegisterOptionsMap, !Ref RunnerEnvironment, ACCESS]                              
-            09StartGitlabRunner:
-              command: sudo gitlab-runner start
+                  ACCESS: !FindInMap [GitlabRunnerRegisterOptionsMap, !Ref RunnerEnvironment, ACCESS]
             10StartCfnHup:
               command: systemctl start cfn-hup && systemctl enable cfn-hup
   RunnerAutoScalingGroup:
