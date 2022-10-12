@@ -427,7 +427,7 @@ Resources:
       Handler: gitlab-runner-lifecycle-hook.lambda_handler
       # TODO: This role is likely too permissive
       Role: !GetAtt GitlabRunnerRole.Arn
-      Runtime: python3.6
+      Runtime: python3.9
       Environment:
         Variables:
           DOCUMENT_NAME: !Ref Document
