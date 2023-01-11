@@ -36,6 +36,19 @@ For this walkthrough, you need the following:
 - An S3 bucket for storing Lambda deployment packages. 
 - Familiarity with Git, Gitlab CI/CD, Docker, EC2, and CloudFormation.
 
+## Permissions required for the IAM user
+List of Managed policies to be added.
+- AmazonEC2FullAccess
+- AutoScalingFullAccess
+- AmazonS3FullAccess
+- AmazonSSMFullAccess
+- AmazonEventBridgeFullAccess
+- AWSCloudFormationFullAccess
+- AWSLambda_FullAccess
+- IAMFullAccess
+- AmazonECS_FullAccess
+- AmazonEC2ContainerRegistryPowerUser
+
 ## Build a docker executor image for the Gitlab Runner
 The Gitlab Runner in this solution is implemented as docker executor. The Docker executor connects to Docker Engine and runs each build in a separate and isolated container via a predefined docker image. The first step in deploying the Gitlab Runner is building a docker executor image. We provided a simple Dockerfile in order to build this image. You may customize the Dockerfile to install your own requirements. 
 
