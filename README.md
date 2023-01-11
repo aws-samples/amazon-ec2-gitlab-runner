@@ -27,7 +27,17 @@ For this walkthrough, you need the following:
 - A Gitlab account (all tiers including Gitlab Free self-managed, Gitlab Free SaaS, and higher tiers). This demo uses gitlab.com free tire. 
 - A Gitlab Container Registry. 
 - A [Git client](https://git-scm.com/downloads) to clone the source code provided.
-- An AWS account with local credentials properly configured (typically under ~/.aws/credentials).
+- An AWS account with local credentials properly configured (typically under ~/.aws/credentials) with these permissions:
+    - AmazonEC2FullAccess
+    - AutoScalingFullAccess
+    - AmazonS3FullAccess
+    - AmazonSSMFullAccess
+    - AmazonEventBridgeFullAccess
+    - AWSCloudFormationFullAccess
+    - AWSLambda_FullAccess
+    - IAMFullAccess
+    - AmazonECS_FullAccess
+    - AmazonEC2ContainerRegistryPowerUser
 - The latest version of the AWS CLI. For more information, see [Installing, updating, and uninstalling the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html).
 - Docker is installed and running on the localhost/laptop.
 - Nodejs and npm installed on the localhost/laptop. 
@@ -35,19 +45,6 @@ For this walkthrough, you need the following:
 - The following IAM service-linked role created in the AWS account: AWSServiceRoleForAutoScaling
 - An S3 bucket for storing Lambda deployment packages. 
 - Familiarity with Git, Gitlab CI/CD, Docker, EC2, and CloudFormation.
-
-## Permissions required for the IAM user
-List of Managed policies to be added.
-- AmazonEC2FullAccess
-- AutoScalingFullAccess
-- AmazonS3FullAccess
-- AmazonSSMFullAccess
-- AmazonEventBridgeFullAccess
-- AWSCloudFormationFullAccess
-- AWSLambda_FullAccess
-- IAMFullAccess
-- AmazonECS_FullAccess
-- AmazonEC2ContainerRegistryPowerUser
 
 ## Build a docker executor image for the Gitlab Runner
 The Gitlab Runner in this solution is implemented as docker executor. The Docker executor connects to Docker Engine and runs each build in a separate and isolated container via a predefined docker image. The first step in deploying the Gitlab Runner is building a docker executor image. We provided a simple Dockerfile in order to build this image. You may customize the Dockerfile to install your own requirements. 
