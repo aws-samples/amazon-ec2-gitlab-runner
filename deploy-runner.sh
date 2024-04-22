@@ -40,7 +40,7 @@ callCloudFormation()
             ParameterKey=MaxInstanceLifetime,ParameterValue=${MaxInstanceLifetime} \
             ParameterKey=GitlabServerURL,ParameterValue=${GitlabServerURL} \
             ParameterKey=DockerImagePath,ParameterValue=${DockerImagePath} \
-            ParameterKey=RunnerRegistrationTokens,ParameterValue=\"${RunnerRegistrationTokens}\" \
+            ParameterKey=RunnersToken,ParameterValue=\"${RunnersToken}\" \
             ParameterKey=RunnerVersion,ParameterValue=${RunnerVersion} \
             ParameterKey=RunnerEnvironment,ParameterValue=${RunnerEnvironment} \
             ParameterKey=LambdaS3Bucket,ParameterValue=${LambdaS3Bucket} \

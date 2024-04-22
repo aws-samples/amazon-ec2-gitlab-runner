@@ -59,7 +59,7 @@ Parameters:
   DockerImagePath:
     Type: String
     Description: Docker path of the GitLab Runner Docker image    
-  RunnerRegistrationTokens:
+  RunnersToken:
     Type: "String"
     Description: "Comma delimited tokens for the Gitlab projects you want to register to the runner. See runner registration process: https://docs.gitlab.com/runner/register/. "
   RunnerVersion:
@@ -177,7 +177,7 @@ Resources:
     Properties:
       Name: !Sub "/${AWS::StackName}/ci-tokens"
       Type: "String"
-      Value: !Ref RunnerRegistrationTokens
+      Value: !Ref RunnersToken
 
   RunnerSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
@@ -265,6 +265,10 @@ Resources:
                 KillSignal=SIGQUIT
                 TimeoutStopSec=3600
           commands:
+            00SetNewMachineID:
+              command: |
+                  sudo rm -f /etc/machine-id ;
+                  sudo systemd-firstboot --root=/ --setup-machine-id
             01InstallDocker:
               command: sudo yum -y install docker
             02StartDocker:
@@ -288,13 +292,11 @@ Resources:
                       sudo gitlab-runner register \
                       --non-interactive \
                       --url "${GitlabServerURL}" \
-                      --registration-token $GitlabGroupToken \
+                      --token $GitlabGroupToken \
                       --executor "docker" \
                       --docker-image "${DockerImagePath}" \
                       --description "Gitlab Runner with Docker Executor" \
-                      --locked="${isLOCKED}" --access-level "${ACCESS}" \
-                      --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" \
-                      --tag-list "${RunnerEnvironment}-${RunnerVersion}-docker"
+                      --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" 
                   done
                 - isLOCKED: !FindInMap [GitlabRunnerRegisterOptionsMap, !Ref RunnerEnvironment, isLOCKED]
                   ACCESS: !FindInMap [GitlabRunnerRegisterOptionsMap, !Ref RunnerEnvironment, ACCESS]
