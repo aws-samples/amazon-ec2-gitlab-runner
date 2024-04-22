@@ -4,7 +4,8 @@ This solution automates Gitlab Runner deployment and administrative tasks on Ama
 
 The solution is published in this [blog post](https://aws.amazon.com/blogs/devops/deploy-and-manage-gitlab-runners-on-amazon-ec2/). 
 
-> NOTE: The solution presented in this post illustrates a possible way of implementing Gitlab runner autoscaling. Support for this solution is limited. Due to this [breaking change](https://gitlab.com/gitlab-org/gitlab/-/issues/380872), the solution's token registration process needs to be updated.  A vendor supported solution is available here: [GitLab HA Scaling Runner Vending Machine for AWS EC2 ASG](https://gitlab.com/guided-explorations/aws/gitlab-runner-autoscaling-aws-asg). 
+> NOTE: The solution presented in this post illustrates a possible way of implementing Gitlab runner autoscaling. Support for this solution is limited. A vendor supported solution is available here: [GitLab HA Scaling Runner Vending Machine for AWS EC2 ASG](https://gitlab.com/guided-explorations/aws/gitlab-runner-autoscaling-aws-asg). 
+As a result of this [breaking change](https://gitlab.com/gitlab-org/gitlab/-/issues/380872), the solution's token registration process has been be updated on 04/22/2024. The previsou code has been tagged as v1.0. 
 
 ## Overview of the solution
 The following diagram displays the solution architecture. It also shows the workflow of deploying the Gitlab Runner and registering it to Gitlab projects. 
