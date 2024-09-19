@@ -27,7 +27,7 @@ The following diagram displays the solution architecture. It also shows the work
 
 ## Prerequisites
 For this walkthrough, you need the following: 
-- A Gitlab account (all tiers including Gitlab Free self-managed, Gitlab Free SaaS, and higher tiers). This demo uses gitlab.com free tire. 
+- A Gitlab account (all tiers including Gitlab Free self-managed, Gitlab Free SaaS, and higher tiers). This demo uses gitlab.com free tier. 
 - A Gitlab Container Registry. 
 - A [Git client](https://git-scm.com/downloads) to clone the source code provided.
 - An AWS account with local credentials properly configured (typically under ~/.aws/credentials) with these permissions:

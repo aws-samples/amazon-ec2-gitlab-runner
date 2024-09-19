@@ -222,7 +222,7 @@ Resources:
               VolumeType: !Ref VolumeType
               Encrypted: true
         IamInstanceProfile:
-          Arn: !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/GitlabRunnerRole'
+          Arn: !GetAtt InstanceProfile.Arn
         ImageId: !Ref ImageId
         InstanceType: !Ref InstanceType
         SecurityGroupIds:
@@ -501,7 +501,7 @@ Resources:
         S3Key: !Sub "${AWS::StackName}/${AWS::StackName}-runner-monitor-${TimeStamp}.zip"
       Handler: index.handler
       Role: !GetAtt RunnerMonitorRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs20.x
       Timeout: 900
       MemorySize: 256
       ReservedConcurrentExecutions: 1
