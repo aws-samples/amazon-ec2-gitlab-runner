@@ -11,8 +11,8 @@ Parameters:
     Type: "List<AWS::EC2::Subnet::Id>"
     Description: "Use Private App Subnets"
   ImageId:
-    Type: 'AWS::EC2::Image::Id'
-    Description: The image ID to use to create the EC2 runner instance.  
+    Type: "AWS::EC2::Image::Id"
+    Description: The image ID to use to create the EC2 runner instance.
   InstanceType:
     Type: "String"
     Default: "t3.medium"
@@ -58,14 +58,10 @@ Parameters:
     Description: URL of the Gitlab server
   DockerImagePath:
     Type: String
-    Description: Docker path of the GitLab Runner Docker image    
+    Description: Docker path of the GitLab Runner Docker image
   RunnersToken:
     Type: "String"
     Description: "Comma delimited tokens for the Gitlab projects you want to register to the runner. See runner registration process: https://docs.gitlab.com/runner/register/. "
-  RunnerVersion:
-    Type: "String"
-    Default: "v1"
-    Description: "Version of the Runner"
   RunnerEnvironment:
     Type: "String"
     AllowedValues:
@@ -80,7 +76,7 @@ Parameters:
   TimeStamp:
     Type: "String"
     Description: "A timestamp for this deployment. This is used to identify the correct lambda code on S3 for deployment."
-  Concurrent: 
+  Concurrent:
     Type: "Number"
     Description: "Number of concurrent jobs allowed on a Gitlab Runner"
   CheckInterval:
@@ -101,8 +97,8 @@ Parameters:
     Default: 2
     Description: The number of jobs that we should be able to take before needing to wait on a scaling event.
 
-Mappings: 
-  GitlabRunnerRegisterOptionsMap: 
+Mappings:
+  GitlabRunnerRegisterOptionsMap:
     dev:
       isLOCKED: "false"
       ACCESS: "not_protected"
@@ -112,10 +108,10 @@ Mappings:
     prod:
       isLOCKED: "true"
       ACCESS: "ref_protected"
-    
+
 Resources:
   GitlabRunnerRole:
-    Type: 'AWS::IAM::Role'
+    Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -125,49 +121,49 @@ Resources:
               Service:
                 - ec2.amazonaws.com
                 - lambda.amazonaws.com
-            Action: 'sts:AssumeRole'
+            Action: "sts:AssumeRole"
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy'
-        - 'arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore'
+        - "arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy"
+        - "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
       RoleName: GitlabRunnerRole
   InstanceProfile:
-    Type: 'AWS::IAM::InstanceProfile'
+    Type: "AWS::IAM::InstanceProfile"
     Properties:
       InstanceProfileName: GitlabRunnerRole
       Path: /
       Roles:
         - !Ref GitlabRunnerRole
   GitlabRunnerPolicy:
-    Type: 'AWS::IAM::ManagedPolicy'
+    Type: "AWS::IAM::ManagedPolicy"
     Properties:
       PolicyDocument:
         Version: 2012-10-17
         Statement:
           - Sid: AllowInvokeLambda
-            Action: 'lambda:InvokeFunction'
+            Action: "lambda:InvokeFunction"
             Resource: !GetAtt LifeCycleHookFunction.Arn
             Effect: Allow
           - Sid: AllowSSMParameterStoreRead
-            Action: 'ssm:GetParameter*'
-            Resource: !Sub 'arn:aws:ssm:*:*:parameter/${AWS::StackName}/ci-tokens'
+            Action: "ssm:GetParameter*"
+            Resource: !Sub "arn:aws:ssm:*:*:parameter/${AWS::StackName}/ci-tokens"
             Effect: Allow
           - Sid: AllowSSMDocumentRead
             Action:
-              - 'ssm:ListDocuments'
-              - 'ssm:ListCommandInvocations'
-            Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:*'
+              - "ssm:ListDocuments"
+              - "ssm:ListCommandInvocations"
+            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:*"
             Effect: Allow
           - Sid: AllowSSMDocumentSend
-            Action: 
-              - 'ssm:SendCommand'
-            Resource: 
-              - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/*'
-              - !Sub 'arn:aws:ssm:*:${AWS::AccountId}:document/${Document}'
-            Effect: Allow            
+            Action:
+              - "ssm:SendCommand"
+            Resource:
+              - !Sub "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:instance/*"
+              - !Sub "arn:aws:ssm:*:${AWS::AccountId}:document/${Document}"
+            Effect: Allow
           - Sid: AllowCompleteLifycycle
-            Action: 'autoscaling:CompleteLifecycleAction'
-            Resource: !Sub 'arn:aws:autoscaling:${AWS::Region}:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/${AWS::StackName}-asg'
-            Effect: Allow              
+            Action: "autoscaling:CompleteLifecycleAction"
+            Resource: !Sub "arn:aws:autoscaling:${AWS::Region}:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/${AWS::StackName}-asg"
+            Effect: Allow
       ManagedPolicyName: !Sub ${AWS::StackName}-policy
       Roles:
         - !Ref GitlabRunnerRole
@@ -182,13 +178,20 @@ Resources:
   RunnerSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
-      GroupDescription: !Join [ "", [ "Security group for ", !Ref "InstanceName" ] ]
+      GroupDescription: !Join ["", ["Security group for ", !Ref "InstanceName"]]
       VpcId: !Ref "VpcID"
 
   RunnerMonitorSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
-      GroupDescription: !Join [ "", [ "Security group for Gitlab Runner Monitor for ", !Ref "InstanceName" ] ]
+      GroupDescription:
+        !Join [
+          "",
+          [
+            "Security group for Gitlab Runner Monitor for ",
+            !Ref "InstanceName",
+          ],
+        ]
       VpcId: !Ref "VpcID"
 
   AllowRunnerMonitorToRunner:
@@ -210,7 +213,7 @@ Resources:
       IpProtocol: "-1"
 
   RunnerLaunchTemplate:
-    Type: 'AWS::EC2::LaunchTemplate'
+    Type: "AWS::EC2::LaunchTemplate"
     DependsOn: GitlabRunnerRole
     Properties:
       LaunchTemplateName: !Sub ${AWS::StackName}-launch-template
@@ -221,6 +224,10 @@ Resources:
               VolumeSize: !Ref VolumeSize
               VolumeType: !Ref VolumeType
               Encrypted: true
+        MetadataOptions:
+          HttpTokens: "required"
+          HttpPutResponseHopLimit: 1
+          InstanceMetadataTags: "enabled"
         IamInstanceProfile:
           Arn: !GetAtt InstanceProfile.Arn
         ImageId: !Ref ImageId
@@ -234,13 +241,13 @@ Resources:
             /opt/aws/bin/cfn-init -v --stack ${AWS::StackId} --resource RunnerLaunchTemplate --region ${AWS::Region}
             /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource RunnerAutoScalingGroup --region ${AWS::Region}
     Metadata:
-      'AWS::CloudFormation::Init':
+      "AWS::CloudFormation::Init":
         config:
           files:
             /etc/cfn/cfn-hup.conf:
-              owner: 'root'
-              group: 'root'
-              mode: '000400'
+              owner: "root"
+              group: "root"
+              mode: "000400"
               content: !Sub |
                 [main]
                 stack=${AWS::StackId}
@@ -267,8 +274,8 @@ Resources:
           commands:
             00SetNewMachineID:
               command: |
-                  sudo rm -f /etc/machine-id ;
-                  sudo systemd-firstboot --root=/ --setup-machine-id
+                sudo rm -f /etc/machine-id ;
+                sudo systemd-firstboot --root=/ --setup-machine-id
             01InstallDocker:
               command: sudo yum -y install docker
             02StartDocker:
@@ -282,11 +289,11 @@ Resources:
             06InstallGitlabRunner:
               command: sudo gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
             07StartGitlabRunner:
-              command: sudo gitlab-runner start              
+              command: sudo gitlab-runner start
             08SetRegion:
-              command: !Sub 'aws configure set default.region ${AWS::Region}'
+              command: !Sub "aws configure set default.region ${AWS::Region}"
             09ConfigureDockerExecutor:
-              command: !Sub 
+              command: !Sub
                 - |
                   for GitlabGroupToken in `aws ssm get-parameters --names /${AWS::StackName}/ci-tokens --query 'Parameters[0].Value' | sed -e "s/\"//g" | sed "s/,/ /g"`;do
                       sudo gitlab-runner register \
@@ -296,12 +303,26 @@ Resources:
                       --executor "docker" \
                       --docker-image "${DockerImagePath}" \
                       --description "Gitlab Runner with Docker Executor" \
-                      --docker-volumes "/var/run/docker.sock:/var/run/docker.sock" 
+                      --docker-volumes "/var/run/docker.sock:/var/run/docker.sock"
                   done
-                - isLOCKED: !FindInMap [GitlabRunnerRegisterOptionsMap, !Ref RunnerEnvironment, isLOCKED]
-                  ACCESS: !FindInMap [GitlabRunnerRegisterOptionsMap, !Ref RunnerEnvironment, ACCESS]
+                - isLOCKED:
+                    !FindInMap [
+                      GitlabRunnerRegisterOptionsMap,
+                      !Ref RunnerEnvironment,
+                      isLOCKED,
+                    ]
+                  ACCESS:
+                    !FindInMap [
+                      GitlabRunnerRegisterOptionsMap,
+                      !Ref RunnerEnvironment,
+                      ACCESS,
+                    ]
             10StartCfnHup:
               command: systemctl start cfn-hup && systemctl enable cfn-hup
+            11InstallSSMAgent:
+              command: sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+            12StartSSMAgent:
+              command: sudo systemctl restart amazon-ssm-agent
   RunnerAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     CreationPolicy:
@@ -325,7 +346,7 @@ Resources:
       MaxInstanceLifetime: !Ref MaxInstanceLifetime
       LaunchTemplate:
         LaunchTemplateId: !Ref RunnerLaunchTemplate
-        Version: !GetAtt 
+        Version: !GetAtt
           - RunnerLaunchTemplate
           - LatestVersionNumber
       DesiredCapacity: !Ref DesiredCapacity
@@ -335,18 +356,18 @@ Resources:
       MetricsCollection:
         - Granularity: "1Minute"
           Metrics:
-          - "GroupMinSize"
-          - "GroupMaxSize"
+            - "GroupMinSize"
+            - "GroupMaxSize"
       Tags:
         - Key: "APP_ID"
           Value: !Ref AppId
-          PropagateAtLaunch : true
+          PropagateAtLaunch: true
         - Key: "Name"
           Value: !Ref "InstanceName"
-          PropagateAtLaunch : true
+          PropagateAtLaunch: true
         - Key: "COST_CENTER"
           Value: !Ref CostCenter
-          PropagateAtLaunch : true
+          PropagateAtLaunch: true
       TerminationPolicies:
         # If the launch configuration is out of date, then replace it.
         # Otherwise we kill the oldest instance and let the runnerManager bring up new instances with latest config ie tokens
@@ -450,7 +471,7 @@ Resources:
   Rule:
     Type: AWS::Events::Rule
     Properties:
-      EventPattern: !Sub 
+      EventPattern: !Sub
         - |
           {
             "source": ["aws.autoscaling"],
@@ -461,8 +482,8 @@ Resources:
           }
         - { ASG: !Ref RunnerAutoScalingGroup }
       Targets:
-      - Arn: !GetAtt LifeCycleHookFunction.Arn
-        Id: target
+        - Arn: !GetAtt LifeCycleHookFunction.Arn
+          Id: target
 
   RunnerMonitorRole:
     Type: AWS::IAM::Role
@@ -474,7 +495,7 @@ Resources:
             Principal:
               Service:
                 - lambda.amazonaws.com
-            Action: 'sts:AssumeRole'
+            Action: "sts:AssumeRole"
       Policies:
         - PolicyName: RunnerMonitorPermissions
           PolicyDocument:
@@ -489,7 +510,7 @@ Resources:
                 Resource:
                   - "*"
       ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole'
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 
   RunnerMonitorLambda:
     Type: AWS::Lambda::Function
